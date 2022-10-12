@@ -7,18 +7,43 @@ import {
 } from "../Firebase";
 import { useNavigate, Link } from "react-router-dom";
 import "./Register.css";
+import { Formik, useFormik } from "formik";
+import { basicSchema } from "../Schemas";
 
 function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [secondName, setSecondName] = useState("");
-  const [user, loading, error] = useAuthState(auth);
+  const {
+    values,
+    handleBlur,
+    handleChange,
+    errors,
+    touched,
+    isValid,
+    dirty,
+    isSubmitting,
+  } = useFormik({
+    initialValues: {
+      firstName: "",
+      secondName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+
+    validationSchema: basicSchema,
+  });
+
+  const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
-  const register = () => {
-    if (!firstName) alert("Please enter name!");
-    registerWithEmailAndPassword(firstName, email, password);
+  const signUp = (e) => {
+    e.preventDefault();
+    // if (!values.firstName) alert("Please enter name!");
+    registerWithEmailAndPassword(
+      values.firstName,
+      values.email,
+      values.password
+    );
   };
+
   useEffect(() => {
     if (loading) return;
     if (user) navigate("/dashboard");
@@ -26,39 +51,95 @@ function Register() {
   return (
     <div className="register">
       <div className="register__container">
-        <input
-          type="text"
-          className="register__textBox"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          placeholder="First Name"
-        />
-        <input
-          type="email"
-          className="register__textBox"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email address"
-        />
-        <input
-          type="password"
-          className="register__textBox"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-        />
-        <button className="register__btn" onClick={register}>
-          Register
-        </button>
-        <button
-          className="register__btn register__google"
-          onClick={signInWithGoogle}
-        >
-          Register with Google
-        </button>
-        <div>
-          Already have an account? <Link to="/login">login </Link>now
-        </div>
+        <form onSubmit={signUp}>
+          <input
+            type="text"
+            className={
+              errors.firstName && touched.firstName ? "input-error" : ""
+            }
+            value={values.firstName}
+            onChange={handleChange}
+            placeholder="First Name"
+            onBlur={handleBlur}
+            name="firstName"
+            required
+          />
+          {errors.firstName && touched.firstName && (
+            <p className="error">{errors.firstName}</p>
+          )}
+
+          <input
+            type="text"
+            className="register__textBox"
+            value={values.secondName}
+            onChange={handleChange}
+            placeholder="Second Name"
+            onBlur={handleBlur}
+            name="secondName"
+          />
+
+          <input
+            type="email"
+            className={errors.email && touched.email ? "input-error" : ""}
+            value={values.email}
+            onChange={handleChange}
+            placeholder="Email address"
+            onBlur={handleBlur}
+            name="email"
+            required
+          />
+          {errors.email && touched.email && (
+            <p className="error">{errors.email}</p>
+          )}
+
+          <input
+            type="password"
+            className={errors.password && touched.password ? "input-error" : ""}
+            value={values.password}
+            onChange={handleChange}
+            placeholder="Password"
+            onBlur={handleBlur}
+            name="password"
+            required
+          />
+          {errors.password && touched.password && (
+            <p className="error">{errors.password}</p>
+          )}
+          <input
+            type="password"
+            className={
+              errors.confirmPassword && touched.confirmPassword
+                ? "input-error"
+                : ""
+            }
+            value={values.confirmPassword}
+            onChange={handleChange}
+            placeholder="Confirm Password"
+            onBlur={handleBlur}
+            name="confirmPassword"
+            required
+          />
+          {errors.confirmPassword && touched.confirmPassword && (
+            <p className="error">{errors.confirmPassword}</p>
+          )}
+          <button
+            // className="register__btn"
+            type="submit"
+            // onSubmit={signUp}
+            disabled={isSubmitting}
+          >
+            Register
+          </button>
+          <button
+            className="register__btn register__google"
+            onClick={signInWithGoogle}
+          >
+            Register with Google
+          </button>
+          <div>
+            Already have an account? <Link to="/login">login </Link>now
+          </div>
+        </form>
       </div>
     </div>
   );

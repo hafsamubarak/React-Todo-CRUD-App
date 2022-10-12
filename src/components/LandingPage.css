@@ -1,0 +1,11 @@
+.main {
+  text-align: center;
+  padding: 50px;
+  font-weight: 900;
+  font-size: 30px;
+}
+.second,
+.para {
+  text-align: center;
+  font-size: 28px;
+}

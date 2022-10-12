@@ -3,38 +3,62 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, signInWithGoogle, logInWithEmailAndPassword } from "../Firebase";
 import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
+import { useFormik } from "formik";
+import { basicSchema } from "../Schemas";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, loading, error] = useAuthState(auth);
+  const { values, handleBlur, handleChange, errors, touched, isSubmitting } =
+    useFormik({
+      initialValues: {
+        email: "",
+        password: "",
+      },
+      validationSchema: basicSchema,
+    });
+  const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
   useEffect(() => {
     if (loading) {
       return;
     }
-    if (user) navigate("/dashboard");
+    if (user) navigate("/todos");
   }, [user, loading]);
   return (
     <div className="login">
       <div className="login__container">
         <input
           type="text"
-          className="login__textBox"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          className={errors.email && touched.email ? "input-error" : ""}
+          value={values.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
           placeholder="Email address"
+          name="email"
+          required
         />
+        {errors.email && touched.email && (
+          <p className="error">{errors.email}</p>
+        )}
         <input
           type="password"
-          className="login__textBox"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          className={errors.password && touched.password ? "input-error" : ""}
+          value={values.password}
+          onChange={handleChange}
+          onBlur={handleBlur}
           placeholder="Password"
+          name="password"
+          required
         />
+        {errors.password && touched.password && (
+          <p className="error">{errors.password}</p>
+        )}
         <button
           className="login__btn"
-          onClick={() => logInWithEmailAndPassword(email, password)}
+          type="submit"
+          onClick={() =>
+            logInWithEmailAndPassword(values.email, values.password)
+          }
+          disabled={isSubmitting}
         >
           Login
         </button>

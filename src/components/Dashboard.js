@@ -6,7 +6,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import "./Dashboard.css";
 
 function Dashboard() {
-  const [user, loading, error] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const [firstName, setFirstName] = useState("");
   const navigate = useNavigate();
   const fetchUserName = async () => {
