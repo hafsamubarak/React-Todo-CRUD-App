@@ -16,6 +16,7 @@ import {
   where,
   addDoc,
 } from "firebase/firestore";
+//firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyBJvKN6jVdLi9LM5etqKF8JucI2AmQF5MY",
   authDomain: "todo-react-app-5596d.firebaseapp.com",
@@ -28,8 +29,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+//Google Authentication
 const googleProvider = new GoogleAuthProvider();
 const signInWithGoogle = async () => {
+  //using a try…catch block along with async functions so that we can handle errors easily and avoid callbacks as much as possible.
   try {
     const res = await signInWithPopup(auth, googleProvider);
     const user = res.user;
@@ -49,6 +52,7 @@ const signInWithGoogle = async () => {
     alert(err.message);
   }
 };
+//signing in using an email and password
 const logInWithEmailAndPassword = async (email, password) => {
   try {
     const res = await signInWithEmailAndPassword(auth, email, password);
@@ -61,6 +65,7 @@ const logInWithEmailAndPassword = async (email, password) => {
     alert(err.message);
   }
 };
+//function for registering a user with an email and password
 const registerWithEmailAndPassword = async (firstName, email, password) => {
   try {
     const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -79,6 +84,7 @@ const registerWithEmailAndPassword = async (firstName, email, password) => {
     alert(err.message);
   }
 };
+//function that will send a password reset link to an email address
 const sendPasswordReset = async (email) => {
   try {
     await sendPasswordResetEmail(auth, email);
@@ -88,6 +94,7 @@ const sendPasswordReset = async (email) => {
     alert(err.message);
   }
 };
+//the logout function
 const logout = () => {
   signOut(auth);
   localStorage.removeItem("user");

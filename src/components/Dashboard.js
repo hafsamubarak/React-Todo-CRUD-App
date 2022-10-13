@@ -6,11 +6,13 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import "./Dashboard.css";
 
 function Dashboard() {
+  // checking the authentication state. If the user is not authenticated, we redirect the user to the login page.
   const [user, loading] = useAuthState(auth);
   const [firstName, setFirstName] = useState("");
   const navigate = useNavigate();
   const fetchUserName = async () => {
     try {
+      //retrieving the name of the user based on the uid of the user
       const q = query(collection(db, "users"), where("uid", "==", user?.uid));
       const doc = await getDocs(q);
       const data = doc.docs[0].data();

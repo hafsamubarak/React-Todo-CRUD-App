@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import "./Reset.css";
 
 function Reset() {
+  //reset pasword
   const [email, setEmail] = useState("");
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
@@ -17,11 +18,12 @@ function Reset() {
     <div className="reset">
       <div className="reset__container">
         <input
-          type="text"
+          type="email"
           className="reset__textBox"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email address"
+          required
         />
         <button className="reset__btn" onClick={() => sendPasswordReset(email)}>
           send password reset to email

@@ -1,4 +1,3 @@
-import Modal from "./Modal";
 import "./addTask.css";
 import { auth, db } from "./Firebase";
 import {
@@ -14,7 +13,7 @@ import { useFormik } from "formik";
 import { basicSchema } from "./Schemas";
 import { useNavigate } from "react-router-dom";
 
-function AddTask({ onClose, open }) {
+function AddTask() {
   const { values, handleBlur, handleChange, errors, touched } = useFormik({
     initialValues: {
       title: "",
@@ -24,10 +23,8 @@ function AddTask({ onClose, open }) {
     },
     validationSchema: basicSchema,
   });
-  // console.log(values.priority);
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
-  // console.log(user);
   /* function to add new task to firestore */
   const handleSubmit = async (e) => {
     e.preventDefault();

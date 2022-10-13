@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import {
   auth,
@@ -7,30 +7,23 @@ import {
 } from "../Firebase";
 import { useNavigate, Link } from "react-router-dom";
 import "./Register.css";
-import { Formik, useFormik } from "formik";
+import { useFormik } from "formik";
 import { basicSchema } from "../Schemas";
 
 function Register() {
-  const {
-    values,
-    handleBlur,
-    handleChange,
-    errors,
-    touched,
-    isValid,
-    dirty,
-    isSubmitting,
-  } = useFormik({
-    initialValues: {
-      firstName: "",
-      secondName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
+  //destructuring formik methods to handle errors and submit form
+  const { values, handleBlur, handleChange, errors, touched, isSubmitting } =
+    useFormik({
+      initialValues: {
+        firstName: "",
+        secondName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      },
 
-    validationSchema: basicSchema,
-  });
+      validationSchema: basicSchema,
+    });
 
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
@@ -46,6 +39,7 @@ function Register() {
 
   useEffect(() => {
     if (loading) return;
+    //keep track of user authentication status
     if (user) navigate("/dashboard");
   }, [user, loading]);
   return (

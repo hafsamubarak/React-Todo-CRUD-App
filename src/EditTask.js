@@ -3,6 +3,8 @@ import { useState } from "react";
 import "./editTask.css";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "./Firebase";
+import { useFormik } from "formik";
+import { basicSchema } from "./Schemas";
 
 function EditTask({
   open,
@@ -13,24 +15,29 @@ function EditTask({
   toEditPriority,
   toEditDueDate,
 }) {
-  const [title, setTitle] = useState(toEditTitle);
-  const [description, setDescription] = useState(toEditDescription);
-  const [priority, setPriority] = useState(toEditPriority);
-  const [dueDate, setDueDate] = useState(toEditDueDate);
-  const [checked, setChecked] = useState(true);
+  const { values, handleChange, errors, touched } = useFormik({
+    initialValues: {
+      title: toEditTitle,
+      description: toEditDescription,
+      priority: toEditPriority,
+      dueDate: toEditDueDate,
+    },
+    validationSchema: basicSchema,
+  });
+  const [checked] = useState(true);
 
   /* function to update firestore */
-  console.log(priority);
+  console.log(values.priority);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     const taskDocRef = doc(db, "tasks", id);
     try {
       await updateDoc(taskDocRef, {
-        title: title,
-        description: description,
-        dueDate: dueDate,
-        priority: priority,
+        title: values.title,
+        description: values.description,
+        dueDate: values.dueDate,
+        priority: values.priority,
       });
       onClose();
     } catch (err) {
@@ -44,44 +51,49 @@ function EditTask({
         <input
           type="text"
           name="title"
-          onChange={(e) => setTitle(e.target.value.toUpperCase())}
-          value={title}
+          onChange={handleChange}
+          value={values.title}
+          className={errors.title && touched.title ? "input-error" : ""}
+          required
         />
-        <textarea
-          onChange={(e) => setDescription(e.target.value)}
-          value={description}
-        ></textarea>
+        {errors.title && touched.title && (
+          <p className="error">{errors.title}</p>
+        )}
+        <textarea onChange={handleChange} value={values.description}></textarea>
         <div>
           <input
             type="radio"
             name="high"
-            onChange={(e) => setPriority(e.target.value)}
+            onChange={handleChange}
             value="high"
-            checked={priority === "high" ? checked : !checked}
+            checked={values.priority === "high" ? checked : !checked}
           />
           high
           <input
             type="radio"
             name="medium"
-            onChange={(e) => setPriority(e.target.value)}
+            onChange={handleChange}
             value="medium"
-            checked={priority === "medium" ? checked : !checked}
+            checked={values.priority === "medium" ? checked : !checked}
           />
           medium
           <input
             type="radio"
             name="low"
-            onChange={(e) => setPriority(e.target.value)}
+            onChange={handleChange}
             value="low"
-            checked={priority === "low" ? checked : !checked}
+            checked={values.priority === "low" ? checked : !checked}
           />
           low
         </div>
         <input
           type="date"
+          name="dueDate"
           placeholder="Select a date"
-          onChange={(e) => setDueDate(e.target.value)}
-          value={dueDate}
+          onChange={handleChange}
+          value={values.dueDate}
+          className={errors.dueDate && touched.dueDate ? "input-error" : ""}
+          required
         />
         <button type="submit">Edit</button>
       </form>

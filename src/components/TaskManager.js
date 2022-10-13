@@ -3,7 +3,6 @@ import Task from "../Task";
 import { useState, useEffect } from "react";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { auth, db } from "../Firebase";
-import AddTask from "../AddTask";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -11,7 +10,6 @@ function TaskManager() {
   const [date, setDate] = useState("");
   const [filterOptions, setFilterOptions] = useState("select");
   const [searchValue, setSearchValue] = useState("");
-  const [openAddModal, setOpenAddModal] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [user] = useAuthState(auth);
   // console.log(user);
