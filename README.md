@@ -11,6 +11,7 @@ in the todo list page the user could see his added todos and also edit, delete o
 # Future Work
 
 - make more reusable components like form component as it's most used in this app
+- use a state mangement system like Redux or Context.
 - add more styling to the App.
 - The uer will be able to upload his personal image.
 - The user will be able to edit his information.
