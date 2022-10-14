@@ -4,6 +4,7 @@ import TaskItem from "./TaskItem";
 import EditTask from "./EditTask";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "./Firebase";
+import { Link } from "react-router-dom";
 
 function Task({
   id,
@@ -74,12 +75,9 @@ function Task({
         {checked ? <h5>Completed</h5> : <h5>Not Completed</h5>}
         <div className="task__buttons">
           <div className="task__deleteNedit">
-            <button
-              className="task__editButton"
-              onClick={() => setOpen({ ...open, edit: true })}
-            >
+            <Link className="task__editButton" to={`/edit/${id}`}>
               Edit
-            </button>
+            </Link>
             <button className="task__deleteButton" onClick={handleDelete}>
               Delete
             </button>
@@ -100,7 +98,7 @@ function Task({
         />
       )}
 
-      {open.edit && (
+      {/* {open.edit && (
         <EditTask
           onClose={handleClose}
           toEditTitle={title}
@@ -110,7 +108,7 @@ function Task({
           open={open.edit}
           id={id}
         />
-      )}
+      )} */}
     </div>
   );
 }

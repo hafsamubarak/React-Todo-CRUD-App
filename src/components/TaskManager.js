@@ -42,16 +42,18 @@ function TaskManager() {
         type="text"
         placeholder="serach by title"
         onChange={(e) => setSearchValue(e.target.value)}
+        style={{ width: "50%" }}
       />
       <input
         type="date"
         placeholder="Search by date"
         value={date}
         onChange={(e) => setDate(e.target.value)}
+        style={{ width: "50%" }}
       />
 
       <div>
-        <select onChange={onFilterChange}>
+        <select onChange={onFilterChange} style={{ width: "51%" }}>
           <option value="select">Select a filter</option>
           <optgroup label="Done Status">
             <option value="completed">Completed</option>

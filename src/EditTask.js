@@ -1,103 +1,131 @@
-import Modal from "./Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./editTask.css";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "./Firebase";
-import { useFormik } from "formik";
-import { basicSchema } from "./Schemas";
+import {
+  collection,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  updateDoc,
+} from "firebase/firestore";
+import { auth, db } from "./Firebase";
+import { useNavigate } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
 
-function EditTask({
-  open,
-  onClose,
-  toEditTitle,
-  toEditDescription,
-  id,
-  toEditPriority,
-  toEditDueDate,
-}) {
-  const { values, handleChange, errors, touched } = useFormik({
-    initialValues: {
-      title: toEditTitle,
-      description: toEditDescription,
-      priority: toEditPriority,
-      dueDate: toEditDueDate,
-    },
-    validationSchema: basicSchema,
-  });
-  const [checked] = useState(true);
+function EditTask() {
+  // console.log(toEditTitle);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  // const [checked] = useState(true);
+  const [tasks, setTasks] = useState([]);
+  const [user] = useAuthState(auth);
+  const [currentTask, setCurrentTask] = useState({});
 
+  // console.log(priority);
+  const navigate = useNavigate();
+  //get all tasks
+  useEffect(() => {
+    const taskColRef = query(
+      collection(db, "tasks"),
+      orderBy("created", "desc")
+    );
+    onSnapshot(taskColRef, (snapshot) => {
+      setTasks(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      );
+    });
+  }, [user]);
+  //get current task id with id in url
+  const currentTaskId = window.location.pathname.split("/")[2];
+  //show only one task by filtering tasks by id
+  useEffect(() => {
+    if (tasks) {
+      const filterTasks = tasks.filter((task) => task.id === currentTaskId);
+      console.log("heyyyy", filterTasks);
+      setCurrentTask(filterTasks[0]?.data);
+      setPriority(filterTasks[0]?.data?.priority);
+    }
+  }, [currentTaskId, tasks]);
+  console.log(tasks);
+  // if (currentTask) {
+  //   setPriority(currentTask?.priority);
+  // }
+  console.log("current Pathname 👉️", window.location.pathname.split("/")[2]);
+  const handleChange = (e) => {
+    setPriority(e.target.value);
+  };
   /* function to update firestore */
-  console.log(values.priority);
-
   const handleUpdate = async (e) => {
     e.preventDefault();
-    const taskDocRef = doc(db, "tasks", id);
+    const taskDocRef = doc(db, "tasks", currentTaskId);
+    // console.log(id);
     try {
       await updateDoc(taskDocRef, {
-        title: values.title,
-        description: values.description,
-        dueDate: values.dueDate,
-        priority: values.priority,
+        title: title ? title : currentTask?.title,
+        description: description ? description : currentTask?.description,
+        dueDate: dueDate ? dueDate : currentTask?.dueDate,
+        priority: priority ? priority : currentTask?.priority,
       });
-      onClose();
+      navigate("/todos");
     } catch (err) {
       alert(err);
     }
   };
+  console.log(priority, "hhh");
 
   return (
-    <Modal modalLable="Edit Task" onClose={onClose} open={open}>
-      <form onSubmit={handleUpdate} className="editTask">
+    <form onSubmit={handleUpdate} className="editTask">
+      <input
+        type="text"
+        name="title"
+        onChange={(e) => setTitle(e.target.value.toUpperCase())}
+        defaultValue={currentTask?.title}
+        required
+      />
+      <textarea
+        onChange={(e) => setDescription(e.target.value)}
+        defaultValue={currentTask?.description}
+      ></textarea>
+      <div>
         <input
-          type="text"
-          name="title"
+          type="radio"
+          name="priority"
           onChange={handleChange}
-          value={values.title}
-          className={errors.title && touched.title ? "input-error" : ""}
-          required
+          defaultValue="high"
+          checked={priority === "high"}
         />
-        {errors.title && touched.title && (
-          <p className="error">{errors.title}</p>
-        )}
-        <textarea onChange={handleChange} value={values.description}></textarea>
-        <div>
-          <input
-            type="radio"
-            name="high"
-            onChange={handleChange}
-            value="high"
-            checked={values.priority === "high" ? checked : !checked}
-          />
-          high
-          <input
-            type="radio"
-            name="medium"
-            onChange={handleChange}
-            value="medium"
-            checked={values.priority === "medium" ? checked : !checked}
-          />
-          medium
-          <input
-            type="radio"
-            name="low"
-            onChange={handleChange}
-            value="low"
-            checked={values.priority === "low" ? checked : !checked}
-          />
-          low
-        </div>
+        high
         <input
-          type="date"
-          name="dueDate"
-          placeholder="Select a date"
+          type="radio"
+          name="priority"
           onChange={handleChange}
-          value={values.dueDate}
-          className={errors.dueDate && touched.dueDate ? "input-error" : ""}
-          required
+          defaultValue="medium"
+          checked={priority === "medium"}
         />
-        <button type="submit">Edit</button>
-      </form>
-    </Modal>
+        medium
+        <input
+          type="radio"
+          name="priority"
+          onChange={handleChange}
+          defaultValue="low"
+          checked={priority === "low"}
+        />
+        low
+      </div>
+      <input
+        type="date"
+        placeholder="Select a date"
+        onChange={(e) => setDueDate(e.target.value)}
+        defaultValue={currentTask?.dueDate}
+        required
+      />
+      <button type="submit">Edit</button>
+    </form>
   );
 }
 

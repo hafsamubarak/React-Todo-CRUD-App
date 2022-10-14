@@ -56,7 +56,8 @@ input.input-error {
   color: #fc8181;
   text-align: left;
 }
-input {
+input,
+select {
   width: 100%;
   padding: 0.65rem 0.5rem;
   font-size: 1rem;
