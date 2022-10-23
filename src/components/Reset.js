@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, sendPasswordReset } from "../Firebase";
 import { useNavigate, Link } from "react-router-dom";
@@ -9,10 +9,8 @@ function Reset() {
   const [email, setEmail] = useState("");
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
-  useEffect(() => {
-    if (loading) return;
-    if (user) navigate("/dashboard");
-  }, [user, loading]);
+  if (loading) return <div className="loader"></div>;
+  if (user) navigate("/dashboard");
 
   return (
     <div className="reset">

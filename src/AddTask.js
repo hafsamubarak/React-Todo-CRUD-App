@@ -12,6 +12,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useFormik } from "formik";
 import { basicSchema } from "./Schemas";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function AddTask() {
   const { values, handleBlur, handleChange, errors, touched } = useFormik({
@@ -25,6 +26,12 @@ function AddTask() {
   });
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
+  useEffect(() => {
+    if (!user) navigate("/login");
+  });
+  if (!user) {
+    navigate("/login");
+  }
   /* function to add new task to firestore */
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,7 +47,6 @@ function AddTask() {
         priority: values.priority,
         dueDate: values.dueDate,
         uid: data.uid,
-        // owner: user.uid,
       });
       navigate("/todos");
     } catch (err) {

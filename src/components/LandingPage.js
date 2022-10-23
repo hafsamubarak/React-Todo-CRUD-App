@@ -4,8 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../Firebase";
 import "./LandingPage.css";
 function LandingPage() {
-  const [user] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
+  if (loading) {
+    return <div className="loader"></div>;
+  }
   if (user) navigate("/todos");
   return (
     <>

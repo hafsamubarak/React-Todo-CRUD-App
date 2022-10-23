@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import {
   auth,
@@ -12,18 +12,17 @@ import { basicSchema } from "../Schemas";
 
 function Register() {
   //destructuring formik methods to handle errors and submit form
-  const { values, handleBlur, handleChange, errors, touched, isSubmitting } =
-    useFormik({
-      initialValues: {
-        firstName: "",
-        secondName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      },
+  const { values, handleBlur, handleChange, errors, touched } = useFormik({
+    initialValues: {
+      firstName: "",
+      secondName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
 
-      validationSchema: basicSchema,
-    });
+    validationSchema: basicSchema,
+  });
 
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
@@ -37,11 +36,9 @@ function Register() {
     );
   };
 
-  useEffect(() => {
-    if (loading) return;
-    //keep track of user authentication status
-    if (user) navigate("/dashboard");
-  }, [user, loading]);
+  //keep track of user authentication status
+  if (loading) return <div className="loader"></div>;
+  if (user) navigate("/dashboard");
   return (
     <div className="register">
       <div className="register__container">
@@ -120,7 +117,7 @@ function Register() {
             // className="register__btn"
             type="submit"
             // onSubmit={signUp}
-            disabled={isSubmitting}
+            disabled={!(values.password === values.confirmPassword)}
           >
             Register
           </button>

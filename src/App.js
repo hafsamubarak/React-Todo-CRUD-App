@@ -17,10 +17,11 @@ function App() {
         <Header />
         <Routes>
           <Route exact path="/" element={<LandingPage />} />
-          <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/reset" element={<Reset />} />
+
+          <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/todos" element={<Todos />} />
           <Route exact path="/addTask" element={<AddTask />} />
           <Route exact path="/edit/:id" element={<EditTask />} />

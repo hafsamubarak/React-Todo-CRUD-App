@@ -27,6 +27,7 @@ function EditTask() {
   const navigate = useNavigate();
   //get all tasks
   useEffect(() => {
+    if (!user) navigate("/login");
     const taskColRef = query(
       collection(db, "tasks"),
       orderBy("created", "desc")

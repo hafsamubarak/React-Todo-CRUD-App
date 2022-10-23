@@ -14,10 +14,10 @@ function TaskManager() {
   const [user] = useAuthState(auth);
   // console.log(user);
   const navigate = useNavigate();
-  if (!user) navigate("/login");
 
   /* function to get all tasks from firestore in realtime */
   useEffect(() => {
+    if (!user) navigate("/login");
     const taskColRef = query(
       collection(db, "tasks"),
       // where("owner", "==", user.uid),

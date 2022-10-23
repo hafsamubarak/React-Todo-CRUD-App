@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, signInWithGoogle, logInWithEmailAndPassword } from "../Firebase";
 import { useNavigate, Link } from "react-router-dom";
@@ -18,12 +18,8 @@ function Login() {
     });
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
-  useEffect(() => {
-    if (loading) {
-      return;
-    }
-    if (user) navigate("/todos");
-  }, [user, loading]);
+  if (loading) return <div loader></div>;
+  if (user) navigate("/todos");
   return (
     <div className="login">
       <div className="login__container">
